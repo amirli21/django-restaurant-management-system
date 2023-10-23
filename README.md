@@ -3,6 +3,6 @@ This repo contains my codes for restaurant management system.
 
 Please note that, in order this app to work, 
 
-**firstly, go to the requirements.txt file and add packages. **
+<strong>firstly, go to the <code>requirements.txt</code> file and install packages.</strong>
 
-** secondly, specify your credentials in .env file like .env-sample file **
+<strong>secondly, specify your credentials in <code>.env </code> file like <code>.env-sample</code> file </strong>
