@@ -29,7 +29,8 @@
                     <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
                         <div class="login-option">
                             {% if user.is_authenticated %}
-                            <a class="cs-color cs-popup-joinus-btn login-popup" data-target="#sign-in" href="{% url 'logout' %}">Logout</a>
+                            <a class="cs-color cs-popup-joinus-btn login-popup" data-target="#sign-in" href="{% url 'dashboard' %}">My account</a>
+                            <a class="cs-color cs-popup-joinus-btn login-popup text-danger" data-target="#sign-in" href="{% url 'logout' %}">Logout</a>
                             {% else %}
                             <a class="cs-color cs-popup-joinus-btn login-popup" data-target="#sign-in" href="{% url 'login' %}">Login</a>/ 
                             <a class="cs-color cs-popup-joinus-btn login-popup" href="{% url 'register-user' %}">Register</a><a class="get-start-btn" href="{% url 'register-restaurant' %}">
