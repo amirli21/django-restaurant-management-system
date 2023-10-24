@@ -5,7 +5,26 @@ from django.contrib import messages
 from vendor.forms import VendorForm
 from django.contrib import auth
 from .utils import detect_user
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.core.exceptions import PermissionDenied
+
+
+# Restrict vendor from accesing the customer page
+def check_role_vendor(user):
+    if user.role == 1:
+        return True
+    else:
+        raise PermissionDenied
+
+
+
+# Restrict customer from accesing the vendor page
+def check_role_user(user):
+    if user.role == 2:
+        return True
+    else:
+        raise PermissionDenied
+
 
 
 def register_user(request):
@@ -109,9 +128,13 @@ def my_account(request):
     return redirect(redirect_url)
 
 @login_required(login_url='login')
+@user_passes_test(check_role_user)
 def customer_dashboard(request):
     return render(request, 'accounts/customer-dashboard.html')
+
+
 @login_required(login_url='login')
+@user_passes_test(check_role_vendor)
 def vendor_dashboard(request):
     return render(request, 'accounts/vendor-dashboard.html')
 
