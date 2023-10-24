@@ -4,9 +4,15 @@ from .models import User, UserProfile
 from django.contrib import messages
 from vendor.forms import VendorForm
 from django.contrib import auth
+from .utils import detect_user
+from django.contrib.auth.decorators import login_required
+
 
 def register_user(request):
-    if request.method == 'POST':
+    if request.user.is_authenticated:
+        messages.warning(request, 'You are already logged in.')
+        return redirect('customer-dashboard')
+    elif request.method == 'POST':
         form = UserForm(request.POST)
         if form.is_valid():
             # Create the user using the form
@@ -39,7 +45,10 @@ def register_user(request):
 
 
 def register_restaurant(request):
-    if request.method == 'POST':
+    if request.user.is_authenticated:
+        messages.warning(request, 'You are already logged in')
+        return redirect('vendor-dashboard')
+    elif request.method == 'POST':
         form = UserForm(request.POST)
         v_form = VendorForm(request.POST, request.FILES)
         if form.is_valid() and v_form.is_valid():
@@ -74,7 +83,7 @@ def register_restaurant(request):
 def login(request):
     if request.user.is_authenticated:
         messages.warning(request, 'You are already logged in.')
-        return redirect('dashboard')
+        return redirect('customer-dashboard')
     elif request.method == 'POST':
         email = request.POST['email']
         password = request.POST['password']
@@ -82,7 +91,7 @@ def login(request):
         if user is not None:
             auth.login(request, user)
             messages.success(request, 'You are now logged in successfully.')
-            return redirect('dashboard')
+            return redirect('customer-dashboard')
         else:
             messages.error(request, 'Invalid login credentials.')
             return redirect('login')
@@ -93,5 +102,17 @@ def logout(request):
     messages.info(request, 'You are logged out.')
     return redirect('login')
 
-def dashboard(request):
-    return render(request, 'accounts/dashboard.html')
+@login_required(login_url='login')
+def my_account(request):
+    user = request.user
+    redirect_url = detect_user(user)
+    return redirect(redirect_url)
+
+@login_required(login_url='login')
+def customer_dashboard(request):
+    return render(request, 'accounts/customer-dashboard.html')
+@login_required(login_url='login')
+def vendor_dashboard(request):
+    return render(request, 'accounts/vendor-dashboard.html')
+
+
