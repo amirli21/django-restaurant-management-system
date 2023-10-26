@@ -4,7 +4,7 @@ from .models import User, UserProfile
 from django.contrib import messages
 from vendor.forms import VendorForm
 from django.contrib import auth
-from .utils import detect_user
+from .utils import detect_user, send_verification_email
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.exceptions import PermissionDenied
 
@@ -49,6 +49,9 @@ def register_user(request):
             user = User.objects.create_user(first_name=first_name, last_name=last_name, username=username, email=email, password=password)
             user.role = User.CUSTOMER
             user.save()
+            
+            # send verification email
+            send_verification_email(request, user)
             messages.success(request, 'Your account created successfully!')
             return redirect('register-user')
         else:
@@ -84,6 +87,7 @@ def register_restaurant(request):
             user_profile = UserProfile.objects.get(user=user)
             vendor.user_profile = user_profile
             vendor.save()
+            send_verification_email(request, user)
             messages.success(request, 'Your restaurant account has been registered successfully.')
             return redirect('register-restaurant')
         else:
@@ -139,3 +143,6 @@ def vendor_dashboard(request):
     return render(request, 'accounts/vendor-dashboard.html')
 
 
+def activate(request, uidb64, token):
+    # TODO: Activate the user by setting `is_active=True` in the database
+    return
